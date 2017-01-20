@@ -31,43 +31,43 @@ LicenseManager::LicenseManager(AppConfig* appConfig) :
 std::pair<bool, QString>
 LicenseManager::setSerialKey(SerialKey serialKey, bool acceptExpired)
 {
-    std::pair<bool, QString> ret (true, "");
-    time_t currentTime = ::time(0);
+	std::pair<bool, QString> ret (true, "");
+	time_t currentTime = ::time(0);
 
-    if (!acceptExpired && serialKey.isExpired(currentTime)) {
-        ret.first = false;
-        ret.second = "Serial key expired";
-        return ret;
-    }
+	if (!acceptExpired && serialKey.isExpired(currentTime)) {
+		ret.first = false;
+		ret.second = "Serial key expired";
+		return ret;
+	}
 
-    if (serialKey != m_serialKey) {
-        using std::swap;
-        swap (serialKey, m_serialKey);
-        m_AppConfig->setSerialKey(QString::fromStdString
-                                    (serialKey.toString()));
-        emit serialKeyChanged(m_serialKey);
+	if (serialKey != m_serialKey) {
+		using std::swap;
+		swap (serialKey, m_serialKey);
+		m_AppConfig->setSerialKey(QString::fromStdString
+									(m_serialKey.toString()));
+		emit serialKeyChanged(m_serialKey);
 
-        if (serialKey.isTrial()) {
-            emit endTrial(false);
-        }
+		if (serialKey.isTrial()) {
+			emit endTrial(false);
+		}
 
-        if (m_serialKey.edition() != serialKey.edition()) {
-            m_AppConfig->setEdition(m_serialKey.edition());
-            emit editionChanged(m_serialKey.edition());
-        }
+		if (m_serialKey.edition() != serialKey.edition()) {
+			m_AppConfig->setEdition(m_serialKey.edition());
+			emit editionChanged(m_serialKey.edition());
+		}
 
-        if (m_serialKey.isTrial()) {
-            if (m_serialKey.isExpired(currentTime)) {
-                emit endTrial(true);
-            } else {
-                emit beginTrial(m_serialKey.isExpiring(currentTime));
-            }
-        }
+		if (m_serialKey.isTrial()) {
+			if (m_serialKey.isExpired(currentTime)) {
+				emit endTrial(true);
+			} else {
+				emit beginTrial(m_serialKey.isExpiring(currentTime));
+			}
+		}
 
-        m_AppConfig->saveSettings();
-    }
+		m_AppConfig->saveSettings();
+	}
 
-    return ret;
+	return ret;
 }
 
 void
