@@ -17,7 +17,7 @@ add_executable (synergyx
 
 include_directories (../lib/shared ./src)
 
-qt5_use_modules (synergyx Widgets Network)
+qt5_use_modules (synergyx Core Widgets Network)
 
 if (WIN32)
 set_target_properties (synergyx PROPERTIES
